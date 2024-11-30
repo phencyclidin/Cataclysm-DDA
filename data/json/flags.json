@@ -284,6 +284,11 @@
     "inherit": false
   },
   {
+    "id": "CHEMICAL_DECOMPOSITION",
+    "type": "json_flag",
+    "info": "This chemical will decompose over time"
+  },
+  {
     "id": "DECAY_EXPOSED_ATMOSPHERE",
     "type": "json_flag",
     "info": "If exposed to the atmosphere, it will <bad>start to go bad</bad>."

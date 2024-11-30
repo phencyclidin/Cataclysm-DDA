@@ -8089,6 +8089,20 @@ bool item::process_decay_in_air( map &here, Character *carrier, const tripoint &
     return false;
 }
 
+bool item::process_chemical_decomposition( map &here, Character *carrier, const tripoint &pos,
+                                   int max_chemical_decomposition_hours, 
+                                   time_duration time_delta )
+{
+        double decomposition_multiplier = 2;
+        time_duration new_decomp = time_duration::from_seconds( item_counter ) + time_delta *
+                                         rng_normal( 0.9, 1.1 ) * decomposition_multiplier;
+        if( new_decomp >= time_duration::from_hours( max_chemical_decomposition_hours ) ) {
+            convert( *type->revert_to, carrier );
+            return true;
+        }
+        item_counter = to_seconds<int>( new_decomp );
+}
+
 int item::get_env_resist( int override_base_resist ) const
 {
     const islot_armor *t = find_armor_data();
@@ -12968,6 +12982,9 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
                                type->revert_to;
     int64_t max_air_exposure_hours = decays_in_air ? get_property_int64_t( "max_air_exposure_hours" ) :
                                      0;
+    const bool chemical_decomposition = has_flag( flag_CHEMICAL_DECOMPOSITION ) && type->revert_to;
+    int64_t max_chemical_decomposition_hours = chemical_decomposition ? get_property_int64_t( "max_chemical_decomposition_hours" ) :
+                                     0;
 
     if( now - time > 1_hours ) {
         // This code is for items that were left out of reality bubble for long time
@@ -13037,6 +13054,11 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
                 return false;
             }
 
+            if( chemical_decomposition && 
+                process_chemical_decomposition( here, carrier, pos, max_chemical_decomposition_hours, time_delta ) ) {
+                return false;
+            }
+
             // Calculate item rot
             if( process_rot ) {
                 calc_rot( env_temperature, spoil_modifier, time_delta );
@@ -13059,6 +13081,11 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
             process_decay_in_air( here, carrier, pos, max_air_exposure_hours, now - time ) ) {
             return false;
         }
+
+        if( chemical_decomposition && 
+            process_chemical_decomposition( here, carrier, pos, max_chemical_decomposition_hours, now - time ) ) {
+            return false;
+            }
 
         if( process_rot ) {
             calc_rot( temp, spoil_modifier, now - time );

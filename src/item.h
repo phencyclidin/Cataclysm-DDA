@@ -3132,6 +3132,9 @@ class item : public visitable
         bool process_decay_in_air( map &here, Character *carrier, const tripoint &pos,
                                    int max_air_exposure_hours,
                                    time_duration time_delta );
+        bool process_chemical_decomposition( map &here, Character *carrier, const tripoint &pos,
+                                   int max_chemical_decomposition_hours,
+                                   time_duration time_delta );
 
 
     public:
