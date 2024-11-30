@@ -759,6 +759,7 @@
       { "prob": 25, "group": "garlic_powder_various" },
       { "prob": 10, "group": "sprinkles_bottle_plastic_small_62" },
       { "item": "thyme", "prob": 65 },
+      { "item": "chem_baking_soda", "prob": 30, "charges": [ 1, -1 ] },
       { "prob": 50, "group": "seasoning_italian_various" },
       { "prob": 50, "group": "seasoning_salt_various" }
     ]
